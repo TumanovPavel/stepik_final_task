@@ -3,50 +3,28 @@ from .locators import ProductPageLocators
 
 
 class ProductPage(BasePage):
-    product_name = ''
-    product_price = ''
-    product_decription = ''
 
     def add_product_to_basket(self):
-        self.should_be_name()
-        self.should_be_price()
-        self.should_be_decription()
-        self.should_be_add_button()
-
         add_basket_buton = self.browser.find_element(*ProductPageLocators.ADD_BASKET_BUTON)
         add_basket_buton.click()
 
-        self.solve_quiz_and_get_code()
+    def product_name_in_the_message_compare_the_added_product(self):
+        product_name_in_the_message = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME_IN_THE_MESSAGE).text
+        product_name_in_the_catalog = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME_IN_THE_CATALOG).text
+        assert product_name_in_the_message == product_name_in_the_catalog, 'The name of the product in the message ' \
+                                                                           'does not match the added product '
 
-        self.should_be_success()
-        self.check_success_message()
-    def should_be_name(self):
-        assert self.is_element_present(*ProductPageLocators.PRODUCT_NAME), "Name of product not found"
-        self.product_name = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME).text
+    def product_price_in_the_basket_compare_the_added_product(self):
+        product_price_in_the_message = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE_IN_THE_MESSAGE).text
+        product_price_in_the_catalog = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE_IN_THE_CATALOG).text
+        assert product_price_in_the_message == product_price_in_the_catalog, 'The price of the product in the message ' \
+                                                                             'does not match the added product '
 
-    def should_be_price(self):
-        assert self.is_element_present(*ProductPageLocators.PRODUCT_PRICE), "Price of product not found"
-        self.product_price = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE).text
-
-    def should_be_decription(self):
-        assert self.is_element_present(*ProductPageLocators.PRODUCT_DESCRIPTION), "Description of product not found"
-        self.product_decription = self.browser.find_element(*ProductPageLocators.PRODUCT_DESCRIPTION).text
-
-    def should_be_success(self):
-        assert self.is_element_present(*ProductPageLocators.SUCCESS_MESSAGES), "Message of Success added product in basket not found "
-
-    def should_be_add_button(self):
-        assert self.is_element_present(*ProductPageLocators.ADD_BASKET_BUTON), "Button 'Add to basket' is not presented "
-
-    def check_success_message(self):
-        msg_lst = self.browser.find_elements(*ProductPageLocators.SUCCESS_MESSAGES)
-        assert len(msg_lst) == 3, "Success message not found"
-
-        assert self.product_name == msg_lst[0].text, "Wrong name product added to basket"
-        assert self.product_price == msg_lst[2].text, "Wrong price product added to basket"
+    def guest_cant_see_success_message_after_adding_product_to_basket(self):
+        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), 'Success message is presented'
 
     def should_not_be_success_message(self):
-        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGES), "Success message is presented, but should not be"
+        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), "Success message is presented, but should not be"
 
     def should_disappeared_success_message(self):
-        assert self.is_disappeared(*ProductPageLocators.SUCCESS_MESSAGES), "Success message is not disappeared"
+        assert self.is_disappeared(*ProductPageLocators.SUCCESS_MESSAGE), "Success message is not disappeared"
